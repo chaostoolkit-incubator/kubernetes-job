@@ -1,0 +1,46 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  namespace: chaostoolkit
+  name: chaostoolkit-repeated-experiment
+spec:
+  schedule: "0,30 * * * *"
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 600
+      template:
+        metadata:
+          labels:
+            app: chaostoolkit
+        spec:
+          serviceAccountName: chaostoolkit
+          restartPolicy: Never
+          containers:
+          - name: chaostoolkit
+            image: chaostoolkit/kubernetes-job:0.1.10
+            args:
+            - --verbose
+            - run
+            - --journal-path
+            - journal.json
+            - /etc/chaostoolkit/experiment.json
+            env:
+            - name: CHAOSTOOLKIT_IN_POD
+              value: "true"
+            volumeMounts:
+            - name: chaostoolkit-config
+              mountPath: /etc/chaostoolkit
+              readOnly: true
+            resources:
+              limits:
+                memory: 64Mi
+              requests:
+                memory: 64Mi
+          volumes:
+          - name: chaostoolkit-config
+            configMap:
+              name: chaostoolkit-config
+              items:
+              - key: experiment.json
+                path: experiment.json

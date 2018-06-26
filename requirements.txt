@@ -1,2 +1,16 @@
 chaostoolkit
+chaostoolkit-google-cloud
 chaostoolkit-kubernetes
+chaostoolkit-aws
+chaostoolkit-azure
+chaostoolkit-gremlin
+chaostoolkit-cloud-foundry
+chaostoolkit-prometheus
+chaostoolkit-slack
+chaostoolkit-spring
+chaostoolkit-humio
+chaostoolkit-instana
+chaostoolkit-istio
+chaostoolkit-opentracing
+jaeger-client
+jsonpath2

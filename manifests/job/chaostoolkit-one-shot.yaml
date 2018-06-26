@@ -1,0 +1,51 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: chaostoolkit
+  name: chaostoolkit-one-shot-experiment
+spec:
+  activeDeadlineSeconds: 600
+  template:
+    metadata:
+      labels:
+        app: chaostoolkit
+    spec:
+      serviceAccountName: chaostoolkit
+      restartPolicy: Never
+      containers:
+      - name: chaostoolkit
+        image: chaostoolkit/kubernetes-job:0.1.10
+        args:
+        - --verbose
+        - run
+        - --journal-path
+        - /tmp/chaostoolkit/results/journal.json
+        - /tmp/chaostoolkit/experiment/experiment.json
+        env:
+        - name: CHAOSTOOLKIT_IN_POD
+          value: "true"
+        volumeMounts:
+        - name: chaostoolkit-config
+          mountPath: /tmp/chaostoolkit/experiment
+          readOnly: true
+        - name: chaostoolkit-results
+          mountPath: /tmp/chaostoolkit/results
+          # this cannot be dynamic yet unfortunately
+          # https://github.com/kubernetes/kubernetes/issues/48677
+          # subPath: uniquesubpath
+          readOnly: false
+        resources:
+          limits:
+            cpu: 20m
+            memory: 64Mi
+          requests:
+            cpu: 20m
+            memory: 64Mi
+      volumes:
+      - name: chaostoolkit-config
+        configMap:
+          name: chaostoolkit-config
+      - name: chaostoolkit-results
+        persistentVolumeClaim:
+          claimName: chaostoolkit-results
