@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: chaostoolkit
+  name: chaostoolkit-results
+spec:
+  capacity:
+    storage: 250Mi
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  gcePersistentDisk:
+    pdName: chaostoolkit-disk
+    fsType: nfs4
